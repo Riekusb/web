@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+
+    <head>
+        <title>Instellingen</title>
+        <script src="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/gauge.js""></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/phunit.css">
+        <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/tool-box.png">
+        <script src="https://kit.fontawesome.com/cebcc85ccc.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/phunit.js"></script>
+    </head>
+
+    <body>
+        <div id="container">
+            <div id="header">
+                <div class="navbar">
+                    <a href="index.html"><i class="fas fa-home"></i></a>
+                    <a href="https://benninksoftware.nl/?page_id=90"><i
+                            class="fas fa-question"></i></a>
+                </div>
+            </div>
+            <div id="body">
+                <h2>Aquarium instellingen</h2>
+                <form action="aquasettings">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div id="device-number">
+                                        <label for="devicenumberId">phunt nummer: </label>
+                                        <input id="devicenumberId" name="device_number" type="text" value="#" >
+                                        <a href="http://dashboard.benninkSoftware.nl/dashboard">
+                                            Maak Account
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="beepId" name="beep" type="checkbox"><i class="far fa-bell"></i>
+                                    Alarm
+                                    <div class="tooltip"><span> <i class="far fa-file-alt"></i></span>
+                                        <span class="tooltiptext">Geef een geluidsignaal wanneer er een alarm op treed.
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>   
+                                    <input name="co2" id="co2AvailableId" type="checkbox" onclick="aquasettingsselectable()"> Co2 installatie.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table id="aquasettings" hidden>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <input id="autophId" name="autoph" type="checkbox" onclick="makeselectable()"><i
+                                        class="fas fa-magic"></i> Auto
+                                    Ph instellen
+                                    <div class="tooltip"><span> <i class="far fa-file-alt"></i></span>
+                                        <span class="tooltiptext">De Ph wordt geregeld door de waarde van de KH naar een
+                                            optimale
+                                            opgeloste CO2 , deze waarde ligt tussen 20 en 25 mg/l <a
+                                                href="https://benninksoftware.nl/wp-content/uploads/2022/11/co2chart.jpg">opgeloste Co2 waarde</a>
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> Gewenste Ph</td>
+                                <td><input type="number" id="phvalueid" name="phvalue" step="0.01" min="5.0" max="10.0"
+                                           required></td>
+                            </tr>
+                            <tr>
+                                <td>Gemeten KH</td>
+                                <td><input type="number" id="khvalueid" name="khvalue" step="0.01" min="1.0" max="10.0">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p>
+                        <button class="button" type="submit">verzenden</button>
+                    </p>
+                </form>
+            </div>
+            <div id="footer">
+                <a class="footer_link" href="https://www.benninksoftware.nl/"> Bennink Software</a>
+            </div>
+        </div>
+        <script>
+            function getData() {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState === 4 && this.status === 200) {
+                        myObj = JSON.parse(this.responseText);
+                        document.getElementById('autophId').checked = myObj["auto"].valueOf();
+                        document.getElementById('phvalueid').value = myObj["ph"].valueOf();
+                        document.getElementById('khvalueid').value = myObj["kh"].valueOf();
+                        document.getElementById('beepId').checked = myObj["beep"].valueOf();
+                        document.getElementById('co2AvailableId').checked = myObj["co2"].valueOf();
+                        if (myObj["device_number"].valueOf() === "#") {
+                            document.getElementById('devicenumberId').value="";
+                            document.getElementById('device-number').hidden = false;
+                        } else {
+                            document.getElementById('devicenumberId').value = myObj["device_number"].valueOf();
+                            document.getElementById('device-number').hidden = true;
+                        }
+                        makeselectable();
+                        aquasettingsselectable();
+                    }
+                };
+                xhttp.open("GET", "aquapagedata", true);
+                xhttp.send();
+            } ;
+
+            window.onload = function () {
+                getData();
+            };
+
+            function makeselectable() {
+                if (document.getElementById("autophId").checked === true) {
+                    document.getElementById("phvalueid").disabled = true;
+                } else {
+                    document.getElementById("phvalueid").disabled = false;
+                }
+            }
+
+            function aquasettingsselectable() {
+                if (document.getElementById("co2AvailableId").checked === true) {
+                    document.getElementById("aquasettings").hidden = false;
+                } else {
+                    document.getElementById("aquasettings").hidden = true;
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Aquarium</title>
+    <script src="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/gauge.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/phunit.css">
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/fish-bowl.png">
+    <script src="https://kit.fontawesome.com/cebcc85ccc.js" crossorigin="anonymous"></script>
+    <script src = "https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/phunit.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="header">
+            <div class="navbar">
+                <a class="navbar_active" href="index.html"><i class="fas fa-home"></i></a>
+                <div class="dropdown">
+                    <button id="menubutton" class="dropbtn" onclick="myFunction()"><i class="fas fa-tools"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content" id="myDropdown">
+                        <a href="calibrate.html"><i class="fas fa-ruler-vertical"></i> Ph pen kalibreren</a>
+                        <a href="aquarium.html"><i class="fas fa-fish"></i> Aquarium instellen</a>
+                        <div id="dimunit" hidden>
+                            <a onclick="navigateToDimUnit()"><i class="far fa-lightbulb"></i> Licht instellen</a>
+                        </div>
+                        <div id="dosingpump" hidden>
+                            <a onclick="navigateToDosingPump"><i class="fas fa-pump-soap"></i> Voedingspomp
+                                instellen</a>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://benninksoftware.nl/?page_id=32"><i
+                        class="fas fa-question"></i></a>
+            </div>
+        </div>
+        <div id="body">
+            <h2>Aquarium Informatie</h2>
+            <table class="status">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div id="gaugeph" class="gauge-container">
+                                <span class="label">Ph</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="gaugekh" class="gauge-container">
+                                <span class="label">KH</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="gaugeco2" class="gauge-container" >
+                                <span class="label">Co2 mg/l</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div id="gaugetemp" class="gauge-container" >
+                                <span class="label">Temperatuur</span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="alarminfo" id="alarminfo" hidden>
+                                <span id="alarmtextid">Dit is alarm text</span>
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+        <div id="footer">
+            <a class="footer_link" href="https://www.benninksoftware.nl/"> Bennink Software</a>
+        </div>
+    </div>
+    <script>
+
+        var linkDimUnit = "#";
+        var linkDosingPump = "#";
+
+        function navigateToDosingPump() {
+            location.href = linkDosingPump;
+        }
+
+        function navigateToDimUnit() {
+            location.href = linkDimUnit;
+        }
+
+        function getIps() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    myObj = JSON.parse(this.responseText);
+                    linkDimUnit = "http://" + myObj["dimunit"].valueOf();
+                    linkDosingPump = "http://" + myObj["dosingpump"].valueOf();
+                    if (linkDimUnit == "http://#") {
+                        document.getElementById("dimunit").hidden = true;
+                    } else {
+                        document.getElementById("dimunit").hidden = false;
+                    }
+                    if (linkDosingPump == "http://#") {
+                        document.getElementById("dosingpump").hidden = true;
+                    } else {
+                        document.getElementById("dosingpump").hidden = false;
+                    }
+                }
+            };
+            xhttp.open("GET", "getips", true);
+            xhttp.send();
+
+        }
+
+        function myFunction() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
+
+        /* Close the dropdown if the user clicks outside of it*/
+        window.onclick = function (event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                var i;
+                for (i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        };
+
+        var gaugeph = Gauge(document.getElementById("gaugeph"), gaugephSetting);
+
+        var gaugekh = Gauge(document.getElementById("gaugekh"), gaugekhSetting );
+
+        var gaugetemp = Gauge(document.getElementById("gaugetemp"), gaugetempSetting);
+
+        var gaugeco2 = Gauge(document.getElementById("gaugeco2"), gaugeco2Setting);
+
+        function getData() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    myObj = JSON.parse(this.responseText);
+                    gaugeph.setValue(myObj["ph"].valueOf());
+                    gaugeco2.setValue(myObj["co2"].valueOf());
+                    gaugetemp.setValue(myObj["temp"].valueOf());
+                    gaugekh.setValue(myObj["kh"].valueOf());
+                    document.getElementById("alarmtextid").innerHTML = myObj["alarm"].valueOf();
+                    if (myObj["alarm"].valueOf() != "") {
+                        document.getElementById('alarminfo').hidden = false;
+                    } else {
+                        document.getElementById('alarminfo').hidden = true;
+                    }
+                }
+
+            };
+            xhttp.open("GET", "indexpagedata", true);
+            xhttp.send();
+        }
+
+        window.onload = function () {
+            getData();
+            getIps();
+        };
+
+        setInterval(function () {
+            /* Call a function every 2 seconds*/
+            getData();
+        }, 2000);
+
+        setInterval(function () {
+            /* Call a function every 2 seconds*/
+            getIps();
+        }, 5000);
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,177 @@
+<html>
+
+<head>
+    <title>Kalibreren</title>
+    <script src="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/gauge.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/phunit.css">
+    <link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/target.png">
+    <script src="https://kit.fontawesome.com/cebcc85ccc.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/Riekusb/producten/phunit/phunit.js"></script>
+</head>
+
+<body>
+    <div id="container">
+        <div id="header">
+            <div class="navbar">
+                <a href="index.html"><i class="fas fa-home"></i></a>
+                <a href="https://benninksoftware.nl/?page_id=97"><i
+                        class="fas fa-question"></i></a>
+            </div>
+        </div>
+        <div id="body">
+            <h2>Ph Pen Kalibratie</h2>
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Wat heb je nodig:
+                            <ol>
+                                <li>Gedistelleerd water.</li>
+                                <li>Ijk vloeistof van 7.00</li>
+                                <li>Ijk vloeistof 4.00</li>
+                            </ol>
+                        </td>
+                    <tr>
+                        <td id="gauges" hidden>
+                            <div id="gaugeph" class="gauge-container">
+                                <span class="label">Ph</span>
+                            </div>
+                            <div id="gauge_timer" class="gauge-container">
+                                <span class="label">sec</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="spoelfor7">
+                Spoel de ph pen eerst goed met gedistelleerd water en
+                plaats de ph pen in een oplossing van 7.00 en druk op de onderstaande knop.
+                </p>
+                <button class="button" id="buttonCal7" onclick="startCalibrate7()">Kalibratie 7.00</button>
+                </p>
+            </div>
+            <div id="spoelfor4" hidden>
+                Spoel de ph pen weer goed met gedistelleerd water en plaats de ph pen nu in een oplossing van 4.00 en
+                druk op de
+                onderstaande knop.
+                <p id="buttoncal4">
+                    <button class="button" id="buttonCal4" onclick="startCalibrate4()">Kalibratie 4.00</button>
+                </p>
+            </div>
+        </div>
+        <div id="footer">
+            <a class="footer_link" href="https://www.benninksoftware.nl/"> Bennink Software</a>
+        </div>
+    </div>
+
+    <script>
+        var calstatus7 = false;
+        var dataTimer;
+        var nextStepTimer;
+        var cal7;
+        var cal4;
+        var TIME_LIMIT = CALIBRATION_TIME;
+        var timePassed = 0;
+        var timeLeft = timeLeft;
+        var calibrationCountDownTimer;
+        var gaugeph = Gauge(document.getElementById('gaugeph'), gaugephSetting);
+        var gaugeTimer = Gauge(document.getElementById('gauge_timer'), gaugeTimerSetting);
+
+
+        function showGauges() {
+            document.getElementById('gauges').hidden = false;
+        }
+
+        function hideGauges() {
+            document.getElementById('gauges').hidden = true;
+        }
+
+        function startTimers() {
+            TIME_LIMIT = CALIBRATION_TIME;
+            timePassed = 0;
+            timeLeft = TIME_LIMIT;
+            calibrationCountDownTimer = setInterval(updateTimerGauge, 1000);
+            dataTimer = setInterval(getData, 1000);
+        }
+
+        function stopTimers() {
+            clearInterval(calibrationCountDownTimer);
+            clearInterval(dataTimer);
+        }
+
+        function startCalibrate7() {
+            calstatus7 = true;
+            document.getElementById('spoelfor7').hidden = true;
+            startTimers();
+            nextStepTimer = setTimeout(showCalibration4, TIME_LIMIT * 1000);
+            showGauges();
+
+        }
+
+        function showCalibration4() {
+            hideGauges();
+            stopTimers();
+            document.getElementById('spoelfor4').hidden = false;
+        }
+
+        function startCalibrate4() {
+            calstatus7 = false;
+            document.getElementById('spoelfor4').hidden = true;;
+            startTimers();
+            nextStepTimer = setTimeout(calibrationEnd, TIME_LIMIT * 1000);
+            showGauges();
+        }
+
+        function calibrationEnd() {
+            hideGauges();
+            stopTimers();
+            if ((cal7 - cal4) > 50) {
+                SendDataRequest();
+
+            } else {
+                alert("Kalibratie is niet gelukt!");
+            }
+            document.getElementById('spoelfor7').hidden = false;
+        }
+
+        
+        function getData() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    myObj = JSON.parse(this.responseText);
+                    gaugeph.setValue(myObj["ph"].valueOf());
+                    if (calstatus7) {
+                        cal7 = myObj["adcvalue"].valueOf();
+                    } else {
+                        cal4 = myObj["adcvalue"].valueOf();
+                    }
+                }
+            };
+            xhttp.open("GET", "calibratedata", true);
+            xhttp.send();
+        }
+
+        function SendDataRequest() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    alert("Kalibratie is gelukt, nieuwe waardes zijn opgslagen");
+                }
+            };
+            xhttp.open("GET", "/calenddata?cal4=" + cal4 + "&cal7=" + cal7, true);
+            xhttp.send();
+        }
+
+        function updateTimerGauge() {
+            timePassed = timePassed += 1;
+            timeLeft = TIME_LIMIT - timePassed;
+            gaugeTimer.setValue(timeLeft);
+        }
+    </script>
+
+</body>
+
+</html>

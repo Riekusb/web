@@ -1,0 +1,268 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 16-mrt-2020, 14:23:45
+    Author     : Riekus
+*/
+
+/* style the top navigation bar*/
+.navbar {
+  overflow: hidden;
+  background-color: black;
+  margin:auto;
+}
+.navbar_active{
+  background-color:#656769;
+}
+.navbar a {
+  float: left;
+  font-size: 16px;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+.navbar a:hover,
+.dropdown:hover .dropbtn {
+  background-color: rgb(44, 184, 172);
+}
+
+/* Style the content */
+.content {
+  background-color: #333;
+  color:white;
+}
+
+/* Style the footer */
+.footer {
+  padding-left: 10px;
+  color:white;
+  padding: 10px;
+}
+.footer a{
+  color:  rgb(44, 184, 172);
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.footer_link:visited{
+  color: green;
+}
+.footer_link:hover{
+  color: aquamarine;
+}
+
+.tbody_calibration{
+  color: #fff;
+}
+
+.status {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+
+.dropdown {
+  float: left;
+  overflow: hidden;
+}
+
+.dropdown .dropbtn {
+  font-size: 16px;
+  border: none;
+  outline: none;
+  color: white;
+  padding: 14px 16px;
+  background-color: inherit;
+  font-family: inherit;
+  margin: 0;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+.dropdown-content a {
+  float: none;
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: left;
+}
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Sets the containers height and width */
+.base-timer {
+  position: relative;
+  height: 300px;
+  width: 300px;
+}
+
+/* Removes SVG styling that would hide the time label */
+.base-timer__circle {
+  fill: none;
+  stroke: none;
+}
+
+/* The SVG path that displays the timer's progress */
+.base-timer__path-elapsed {
+  stroke-width: 7px;
+  stroke: grey;
+}
+
+.base-timer__label {
+  position: absolute;
+  
+  /* Size should match the parent container */
+  width: 300px;
+  height: 300px;
+  
+  /* Keep the label aligned to the top */
+  top: 0;
+  
+  /* Create a flexible box that centers content vertically and horizontally */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Sort of an arbitrary number; adjust to your liking */
+  font-size: 48px;
+}
+
+.alarminfo{
+  animation:blinkingText 1.2s infinite;
+  -webkit-animation:blinkingText 1.2s infinite;
+}
+@keyframes blinkingText{
+  0%{     color: red;    }
+  49%{    color: white; }
+  60%{    color: transparent; }
+  99%{    color:transparent;  }
+  100%{   color: #000;    }
+}
+
+.alarminfo {
+   background-color: red;
+   color: white;
+}
+
+.tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    background-color : darkgrey;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /*Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -150px;
+  }
+
+.tooltiptext::after {
+    content: "";
+    position: relative;
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent transparent black;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
+
+
+.gauge-container > .gauge .dial {
+  stroke: #334455;
+  stroke-width: 20;
+}
+.gauge-container > .gauge .value {
+  stroke: orange;
+  stroke-dasharray: none;
+  stroke-width: 20;
+}
+.gauge-container > .gauge .value-text {
+  fill: white;
+  font-weight: 100;
+  font-size: 1em;
+}
+
+.progbutton {
+  margin: auto;
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 10px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: black;
+  background-color: #7cee80;
+  border: none;
+  border-radius: 10%;
+  box-shadow: 0 5px #999;
+}
+
+.progbutton :active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.button {
+  margin: auto;
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: black;
+  background-color: #7cee80;
+  border: none;
+  border-radius: 10%;
+  box-shadow: 0 9px #999;
+}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.show {
+  display: block;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+
+
