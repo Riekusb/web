@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+
+<head>
+    <title>light page</title>
+    <link rel="stylesheet" href="aquarium.css" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/cebcc85ccc.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="content">
+    <script>
+
+        var phunitIp = "#";
+
+        function getData() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    myObj = JSON.parse(this.responseText);
+                    for (i = 0; i < 10; i++) {
+                        document.getElementById("active" + i).checked = myObj.data[i]["active"].valueOf();
+                        document.getElementById('time' + i).value = myObj.data[i]["time"].valueOf();
+                        document.getElementById('value' + i).value = myObj.data[i]["value"].valueOf();
+                        makeselectable(i);
+                        document.getElementById("progbutton" + i).style.color = "black";
+                    }
+                    document.getElementById("display").checked= myObj["display"].valueOf();
+                    document.getElementById("phunit").checked= myObj["phunit"].valueOf();
+                }
+            };
+            xhttp.open("GET", "/dim", true);
+            xhttp.send();
+        }
+
+        function navigateToPhunit() {
+            if (phunitIp === "#") {
+                getIpPhunit();
+            } else {
+                location.href = phunitIp;
+            }
+        }
+
+        function getIpPhunit() {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState === 4 && this.status === 200) {
+                    if (this.responseText != "EMPTY") {
+                        phunitIp = "http://" + this.responseText;
+                    }
+                }
+            }
+            xhttp.open("GET", "/phunit", true);
+            xhttp.send();
+        }
+
+        function SendAjaxRequest(rowNumber) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    getData();
+                }
+                document.getElementById("progbutton" + rowNumber).style.color = "black";
+            };
+
+            xhttp.open("GET", buildRequestString(rowNumber), true);
+            xhttp.send();
+        }
+
+        function buildRequestString(number) {
+            var request = "/dimrow?row=";
+            request = request + number;
+            if (document.getElementById("active" + number).checked) {
+                request = request + "&active=ON&"
+            }
+            request = request + "time=" + document.getElementById("time" + number).value + "&value=" + document.getElementById("value" + number).value;
+            return request;
+        }
+
+        window.onload = function () {
+            getData();
+            getIpPhunit();
+        };
+
+        function makeselectable(row) {
+            if (row <= 8) {
+                if (document.getElementById("active" + row).checked === true) {
+                    document.getElementById("time" + row).disabled = false;
+                    document.getElementById("value" + row).disabled = false;
+                } else {
+                    document.getElementById("time" + row).disabled = true;
+                    document.getElementById("value" + row).disabled = true;
+                }
+            }
+            document.getElementById("progbutton" + row).style.color = "red";
+        }
+
+        function changeProgButtonColor(row) {
+            document.getElementById("progbutton" + row).style.color = "red";
+        }
+
+        function selectOption(id, selectionNumber) {
+            let element = document.getElementById(id);
+            element.selectedIndex = selectionNumber;
+        }
+
+        function colorTransmitButton(){
+            document.getElementById("progbutton").style.color = "red"; 
+        }
+
+
+
+    </script>
+    <div class="navbar">
+        <a id="home" onclick="navigateToPhunit()"><i class="fas fa-home"></i></a>
+        <a class="navbar_active" href="#"><i class="far fa-lightbulb"></i></a>
+        <a href="https://www.benninksoftware.nl/aquarium/help/dimunit/help.html"><i class="fas fa-question"></i></a>
+    </div>
+
+    <h2> Configuratie</h2>
+    <form action="/config">
+    <input id="display" type="checkbox" name="display" onclick="colorTransmitButton()" > Display
+    <input id="phunit" type="checkbox" name="phunit" onclick="colorTransmitButton()" > Ph Unit
+    <input  type="submit" id="progbutton" class="progbutton" >
+    </form>
+
+    <h2>Lichten instellen</h2>
+   
+
+    <table>
+        <tbody>
+            <th>Actief</th>
+            <th>Aan</th>
+            <th>Procent</th>
+            <th>Legvast</th>
+            <tr>
+                <td>
+                    <input id="active0" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(0)">
+                </td>
+                <td><input id="time0" type="time" name="starttime" onchange="changeProgButtonColor(0)" required
+                        disabled /></td>
+                <td><input id="value0" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(0)" required disabled />
+                </td>
+                <td><button id="progbutton0" class="progbutton" onclick="SendAjaxRequest(0)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+
+            </tr>
+            <tr>
+                <td>
+                    <input id="active1" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(1,true)">
+                </td>
+
+                <td><input id="time1" type="time" name="starttime" onchange="changeProgButtonColor(1)" required
+                        disabled /></td>
+                <td><input id="value1" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(1) " required disabled />
+                </td>
+                <td><button id="progbutton1" class="progbutton" onclick="SendAjaxRequest(1)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active2" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(2,false)">
+                </td>
+
+                <td><input id="time2" type="time" name="starttime" onchange="changeProgButtonColor(2)" required
+                        disabled /></td>
+                <td><input id="value2" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(2)" required disabled />
+                </td>
+                <td><button id="progbutton2" class="progbutton" onclick="SendAjaxRequest(2)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active3" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(3,false)">
+                </td>
+
+                <td><input id="time3" type="time" name="starttime" onchange="changeProgButtonColor(3)" required
+                        disabled /></td>
+                <td><input id="value3" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(3)" required disabled />
+                </td>
+                <td><button id="progbutton3" class="progbutton" onclick="SendAjaxRequest(3)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active4" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(4,false)">
+                </td>
+
+                <td><input id="time4" type="time" name="starttime" onchange="changeProgButtonColor(4)" required
+                        disabled /></td>
+                <td><input id="value4" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(4)" required disabled />
+                </td>
+                <td><button id="progbutton4" class="progbutton" onclick="SendAjaxRequest(4)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active5" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(5,false)">
+                </td>
+
+                <td><input id="time5" type="time" name="starttime" onchange="changeProgButtonColor(5)" required
+                        disabled /></td>
+                <td><input id="value5" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(5)" required disabled />
+                </td>
+                <td><button id="progbutton5" class="progbutton" onclick="SendAjaxRequest(5)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active6" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(6,false)">
+                </td>
+
+                <td><input id="time6" type="time" name="starttime" onchange="changeProgButtonColor(6)" required
+                        disabled /></td>
+                <td><input id="value6" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(6)" required disabled />
+                </td>
+                <td><button id="progbutton6" class="progbutton" onclick="SendAjaxRequest(6)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active7" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(7,false)">
+                </td>
+
+                <td><input id="time7" type="time" name="starttime" onchange="changeProgButtonColor(7)" required
+                        disabled /></td>
+                <td><input id="value7" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(7)" required disabled />
+                </td>
+                <td><button id="progbutton7" class="progbutton" onclick="SendAjaxRequest(7)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active8" type="checkbox" name="checkbox" value="ON" onclick="makeselectable(8,false)">
+                </td>
+
+                <td><input id="time8" type="time" name="starttime" onchange="changeProgButtonColor(8)" required
+                        disabled /></td>
+                <td><input id="value8" type="number" name="endtime" max="100" min="0" step="1"
+                        onchange="changeProgButtonColor(8)" required disabled />
+                </td>
+                <td><button id="progbutton8" class="progbutton" onclick="SendAjaxRequest(8)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="active9" type="checkbox" name="checkbox" value="ON" hidden checked disabled />
+                </td>
+
+                <td><input id="time9" type="time" name="starttime" onchange="changeProgButtonColor(9)" required />
+                </td>
+                <td><input id="value9" type="number" name="endtime" max="100" min="0" step="1" value="0" disabled />
+                </td>
+                <td><button id="progbutton9" class="progbutton" onclick="SendAjaxRequest(9)"><i
+                            class="fas fa-arrow-circle-right"></i></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    </div>
+    <div class="footer">
+        <p><a href="https://www.benninksoftware.nl/"> Bennink Software</a> </p>
+    </div>
+</body>
+
+</html>
