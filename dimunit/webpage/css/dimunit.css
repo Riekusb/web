@@ -30,28 +30,26 @@ and open the template in the editor.
 .dropdown:hover .dropbtn {
   background-color: rgb(44, 184, 172);
 }
-
+.center{
+  margin-left: auto;
+  margin-right: auto;
+}
 /* Style the content */
 .content {
+  text-align: center;
   background-color: #333;
   color:white;
 }
 
 /* Style the footer */
 .footer {
-  padding-left: 10px;
   color:white;
-  padding: 10px;
+  padding: 30px;
 }
 .footer a{
   color:  rgb(44, 184, 172);
 }
 
-.tooltip {
-    position: relative;
-    display: inline-block;
-    border-bottom: 1px dotted black;
-}
 
 .footer_link:visited{
   color: green;
@@ -109,98 +107,11 @@ and open the template in the editor.
   display: block;
 }
 
-/* Sets the containers height and width */
-.base-timer {
-  position: relative;
-  height: 300px;
-  width: 300px;
-}
-
-/* Removes SVG styling that would hide the time label */
-.base-timer__circle {
-  fill: none;
-  stroke: none;
-}
-
-/* The SVG path that displays the timer's progress */
-.base-timer__path-elapsed {
-  stroke-width: 7px;
-  stroke: grey;
-}
-
-.base-timer__label {
-  position: absolute;
-  
-  /* Size should match the parent container */
-  width: 300px;
-  height: 300px;
-  
-  /* Keep the label aligned to the top */
-  top: 0;
-  
-  /* Create a flexible box that centers content vertically and horizontally */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  /* Sort of an arbitrary number; adjust to your liking */
-  font-size: 48px;
-}
-
-
-.tooltiptext {
-    visibility: hidden;
-    width: 300px;
-    background-color : darkgrey;
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    
-    /*Position the tooltip */
-    position: absolute;
-    z-index: 1;
-    top: 100%;
-    left: 50%;
-    margin-left: -150px;
-  }
-
-.tooltiptext::after {
-    content: "";
-    position: relative;
-    top: 50%;
-    left: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent transparent transparent black;
-}
-
-.tooltip:hover .tooltiptext {
-    visibility: visible;
-}
-
-
-.gauge-container > .gauge .dial {
-  stroke: #334455;
-  stroke-width: 20;
-}
-.gauge-container > .gauge .value {
-  stroke: orange;
-  stroke-dasharray: none;
-  stroke-width: 20;
-}
-.gauge-container > .gauge .value-text {
-  fill: white;
-  font-weight: 100;
-  font-size: 1em;
-}
-
 .progbutton {
   margin: auto;
   display: inline-block;
-  padding: 10px 20px;
-  font-size: 10px;
+  padding: 4px 4px;
+  font-size: 20px;
   cursor: pointer;
   text-align: center;
   text-decoration: none;
@@ -240,13 +151,36 @@ and open the template in the editor.
   transform: translateY(4px);
 }
 
+
 .show {
   display: block;
 }
 
-body {
-  font-family: Arial, Helvetica, sans-serif;
+.clock {
+  width: 100%;
+  height: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
+  background-color: #424558;
 }
 
+.time {
+  font-size: 50px;
+  font-weight: bold;
+  color: #fff;
+}
 
+.date-time {
+  font-size: 20px;
+  color: #fff;
+}
+
+@media screen and (max-width: 768px) {
+  .time {
+    font-size: 50px;
+  }
+}
 
